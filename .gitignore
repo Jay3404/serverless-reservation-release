@@ -1,0 +1,11 @@
+__pycache__/
+.venv/
+/data/*
+!/data/README.md
+!/data/download_ibm.py
+!/data/build_evidence_zip.py
+/outputs/
+/results/
+checked-kind48/
+checked-setting-replay/
+generated-figures/

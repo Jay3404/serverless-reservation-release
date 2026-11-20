@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you use this code, cite this artifact and identify the Git commit used."
+type: software
+title: "Serverless Reservation Release under Contention: Reproduction Artifact"
+authors:
+  - family-names: Yang
+    given-names: Jaemin
+  - family-names: Eom
+    given-names: Bitchan
+  - family-names: Kim
+    given-names: Eunchan
+repository-code: "https://github.com/Jay3404/serverless-reservation-release"
+url: "https://github.com/Jay3404/serverless-reservation-release"

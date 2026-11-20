@@ -1,0 +1,4 @@
+# Tested with CPython 3.12 on macOS. NumPy is used to audit ledger arrays.
+# ReportLab is needed only for vector figure regeneration.
+numpy==2.3.5
+reportlab==4.4.9
