@@ -56,7 +56,7 @@ The separate 56-trial validation gave boundary MAEs of 63.898 ms for Calibrated 
 
 Each earlier 80-trial campaign included 40 scored contended requests at the 5-s cleanup setting. In the fixed-delay campaign, MAE was 198.03 ms for the older calibrated fixed delay versus 178.53 ms using the configured cleanup duration alone. In the separate signal campaign, MAE was 92.55 ms for the configured duration versus 8.79 ms for the original signal model. A retrospective comparison in the second campaign gave 165.42 ms for the older fixed delay versus 42.69 ms for a same-day fixed delay fitted on two usable contended observations from separate preflight trials. These historical models used a common overhead rather than the later two-path rule.
 
-## Table A.15. Calibration distributions
+## Table A.17. Calibration distributions
 
 The observed ranges (ms) are minimum to maximum, **not confidence intervals**. Term definitions match Table 3.
 
@@ -84,7 +84,7 @@ The observed ranges (ms) are minimum to maximum, **not confidence intervals**. T
 - The full set of fixed delays that minimize calibration Bind MAE gives 108.515–113.267 ms MAE on the 36 boundary trials, versus 3.114 ms for Signal + Calibrated. The evaluation was not used to select a constant.
 - Rescoring the same forecasts against the successful Bind API audit endpoint gave 109.273 versus 3.110 ms on boundary trials (106.163 ms paired gain) and 335.136 versus 83.700 ms on early trials (251.437 ms gain). This is a different recorded endpoint, not independent timing validation.
 
-## Table B.16. Largest boundary gains
+## Table B.18. Largest boundary gains
 
 Only the three pseudonymous case summaries printed in the paper are shown. All event times are ms after retirement intent. `h` is handler entry, `s` the pre-create cutoff, and `b` the observed Bind. The cache observations bracket reservation release; they do not measure physical memory return.
 

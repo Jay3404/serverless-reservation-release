@@ -1,11 +1,15 @@
 # Offline Kind scoring and decision replay
 
-This is the code-only part of the serverless reservation-release study's Kind control analysis. It neither creates clusters nor makes network calls. Data, result tables, raw logs, credentials, and cluster setup programs are not included. Python 3.10+ and its standard library are sufficient.
+The Kind scoring programs run offline and require only Python's standard
+library. The [root command](../../README.md#recompute-the-results) downloads
+the public release and scores the original campaigns and the new
+[within-setting physical evaluation](within_setting/README.md). It neither
+creates clusters nor requires credentials.
 
-## Reproduce from the separate evidence bundle
+## Reproduce from the extracted release evidence
 
-With the study's evidence ZIP downloaded or otherwise obtained from the author,
-unpack its verified data and run from the repository root:
+For an individual reanalysis, use the verified `kind/` evidence component
+extracted by the root command and run from the repository root:
 
 ```sh
 python3 -B code/kind/reproduce.py --evidence /path/to/evidence/kind --out outputs/kind
@@ -65,4 +69,7 @@ python3 -B code/kind/verify_kind.py replay --source "$SOURCE" \
 
 Replay estimates the configuration-specific return constants from calibration before reading evaluation rows. It reconstructs decisions at recorded states; it cannot measure HTTP latency or reservation cost for an arm that was not physically executed. The six blocks are repeated trials on one host, not six independent clusters in production. Neither command reproduces new physical measurements or quantifies reclaimed physical memory.
 
-The files under `frozen/` are byte-exact copies of archived analysis files. The new `verify_kind.py` entry point resolves external input paths without modifying the original code, seal checks, metric definitions, or receipt format. The code-only checkout can run the synthetic checks, but complete empirical rescoring requires the separately supplied evidence archive.
+The files under `frozen/` are byte-exact copies of archived analysis files. The
+`verify_kind.py` entry point resolves original archive paths without modifying
+the seal checks, metric definitions, or receipt format. The root runner instead
+uses the publicly released projections of those records.

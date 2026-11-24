@@ -6,7 +6,7 @@ immediate release. Other placement wait excludes initialization and is
 expressed per arrival. Reservation costs include modeled resource
 holding times; eligibility uses the study budget of 392,845.201 GB·s.
 
-## Table C.17: Window 1 cache-bracket replay
+## Table C.19: Window 1 cache-bracket replay
 
 ### 8 GB
 
@@ -60,7 +60,7 @@ holding times; eligibility uses the study budget of 392,845.201 GB·s.
 | BU | Planner | 0.000 | 399,400.550 | No |
 | BU | Rule | 0.929 | 555,151.256 | No |
 
-## Table C.18: Window 2 cache-bracket replay
+## Table C.20: Window 2 cache-bracket replay
 
 ### 8 GB
 
@@ -114,7 +114,7 @@ holding times; eligibility uses the study budget of 392,845.201 GB·s.
 | BU | Planner | 0.000 | 403,351.021 | No |
 | BU | Rule | 1.027 | 560,687.233 | No |
 
-## Table C.19: TTL5 horizon sensitivity
+## Table C.21: TTL5 horizon sensitivity
 
 8 GB capacity, 2-second cleanup. Each signed entry is the named policy
 minus the fixed estimate within the same validation window. All cells

@@ -12,12 +12,15 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from reproduce import COMPONENTS, MANIFEST, SCHEMA, need, plain_path, read_manifest
+from reproduce import (COMPONENTS, LEGACY_COMPONENTS, LEGACY_SCHEMA, MANIFEST, SCHEMA,
+                       need, plain_path, read_manifest)
 
 
 def pack(source, output):
     need(not output.is_relative_to(source), "Write the archive outside the input directory")
-    need(set(p.name for p in source.iterdir()) == COMPONENTS, "Use a staging directory with only the four evidence components")
+    components = set(p.name for p in source.iterdir())
+    need(components in (LEGACY_COMPONENTS, COMPONENTS), "Use a staging directory containing only the evidence components")
+    schema = SCHEMA if components == COMPONENTS else LEGACY_SCHEMA
     entries = []
     for path in sorted(source.rglob("*")):
         name = path.relative_to(source).as_posix()
@@ -36,7 +39,7 @@ def pack(source, output):
                     size += len(block)
                     dst.write(block)
             manifest[name] = dict(sha256=h.hexdigest(), bytes=size)
-        content = json.dumps(dict(schema=SCHEMA, files=manifest), indent=2).encode() + b"\n"
+        content = json.dumps(dict(schema=schema, files=manifest), indent=2).encode() + b"\n"
         read_manifest(content)
         zip_.writestr(MANIFEST, content)
     print(f"{len(manifest)} validated member names; wrote {output}")

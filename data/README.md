@@ -1,22 +1,19 @@
 # Data and evidence
 
-This directory contains acquisition instructions and a downloader, not datasets,
-prepared replay bundles, or experimental logs.
+Evidence is distributed as a versioned asset of this repository's
+[GitHub release](https://github.com/Jay3404/serverless-reservation-release/releases/tag/v1.1.0),
+not stored as large files in Git history.
 
 ## Offline evidence for the manuscript
 
-`reproduce.py` reads the separately supplied `fgcs-offline-evidence.zip` or
-its extracted directory. A complete archive has an `evidence-manifest.json`
-and four subdirectories: `ibm/`, `kind/`, `prediction/` and `ppo/`. The
-runner validates every entry before using it. It reads only data, not scripts
-from the ZIP. The archive is not stored or mirrored in this Git repository.
-The accompanying archive has SHA-256:
-
-```text
-719534a37ae86393de420b8487e52036f8581bd8ef02ff2a026e7c7688e583a7
-```
-
-Verify it with `shasum -a 256 fgcs-offline-evidence.zip` before using it.
+`python -B reproduce.py --out results` downloads the pinned release asset
+without credentials. It also accepts a local `--evidence` ZIP or its extracted
+directory. The full archive has an `evidence-manifest.json` and five
+subdirectories: `ibm/`, `kind/`, `prediction/`, `ppo/` and `within-setting/`.
+The runner validates the archive pin in [`public-evidence.json`](public-evidence.json)
+and verifies every member before using it. It reads only data, not scripts
+from the ZIP. A historical format with the first four components is still
+accepted for old-run comparisons but does not reproduce the new evaluation.
 
 | Input | Source and use |
 | --- | --- |
@@ -24,11 +21,15 @@ Verify it with `shasum -a 256 fgcs-offline-evidence.zip` before using it.
 | Normalized IBM replay inputs | Archived request windows, fixed application configurations, simulator parameters and measured-delay calibration. [The preparation script](../code/ibm/prepare.py) assembles them into the exact `inputs.json.gz` consumed by the simulator. |
 | Kind and Bind-prediction records | Experimental assignments, relevant event timestamps, and archived calibration and evaluation records. None can be derived from the IBM publication. |
 | IBM and PPO result ledgers | Archived per-request and instance records, operating-point receipts, and result tables for independent accounting and parity checks. The PPO comparison does not need archived weights or GPU training. |
+| Within-setting Kind records | Sealed 12-trial calibration, separate 48-trial evaluation, and scoped scheduler, Bind, HTTP and signal evidence. `NORMALIZATION.json` in the component describes removal of unused host and Kubernetes identity metadata. Scored results are unchanged. |
 
-Use only evidence copies you are authorized to access. If the separate inputs
-are unavailable, the root guide lists synthetic checks that run without them.
-`build_evidence_zip.py` only packages an already reviewed input directory;
-it does not redact data or publish an archive.
+The IBM inputs are publisher-derived research windows, not a redistribution
+of the whole raw trace. The publisher copyright and [MIT notice](IBM-TRACE-LICENSE.txt)
+are retained with the repository and in the archive. See the pinned source
+below for its attribution and citation. The root guide also lists data-free
+checks. `prepare_within_setting.py` projects lab records to the released audit
+fields; `build_evidence_zip.py` packages already curated evidence and does not
+perform privacy redaction or publish anything.
 
 ## Download the public IBM release
 

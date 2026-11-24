@@ -43,6 +43,7 @@ Recomputed files: `kind/http/evaluation.json` and `kind/http/confirmation.json`.
 | Fallback replay | Same sealed 24 | Same 56, post hoc | Use Calibrated Fixed rather than the configured duration when no signal is available | What motivates Signal + Calibrated? |
 | Fallback test | New 24 | 96, six sessions | Signal + Calibrated vs. Signal + Configured (early) or Calibrated Fixed (boundary) | Does the prespecified comparison hold on new trials? |
 | Retirement control | New 8 after an 8-run timing pilot | 48, six blocks | Forced wait vs. reclaim; fixed vs. signal | When do the action and the signal change outcomes? |
+| Within-setting control | New 12, all forced reclaims | 48, four blocks | Pooled Fixed, Setting-specific Fixed and Signal under two controlled disturbances | Does the signal change the action beyond what known settings explain? |
 
 ## Table 5: IBM replay input contract
 

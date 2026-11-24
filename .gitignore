@@ -4,6 +4,9 @@ __pycache__/
 !/data/README.md
 !/data/download_ibm.py
 !/data/build_evidence_zip.py
+!/data/prepare_within_setting.py
+!/data/public-evidence.json
+!/data/IBM-TRACE-LICENSE.txt
 /outputs/
 /results/
 checked-kind48/

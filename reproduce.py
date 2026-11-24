@@ -8,12 +8,16 @@ import re
 import stat
 import subprocess
 import sys
+from tempfile import TemporaryDirectory
+from urllib.request import Request, urlopen
 from zipfile import ZipFile
 
 
 ROOT = Path(__file__).resolve().parent
-SCHEMA = "fgcs-offline-evidence-v1"
-COMPONENTS = {"ibm", "kind", "ppo", "prediction"}
+LEGACY_SCHEMA = "fgcs-offline-evidence-v1"
+SCHEMA = "fgcs-offline-evidence-v2"
+LEGACY_COMPONENTS = {"ibm", "kind", "ppo", "prediction"}
+COMPONENTS = LEGACY_COMPONENTS | {"within-setting"}
 DATA_SUFFIXES = {".csv", ".gz", ".json", ".md", ".npz", ".npy"}
 LIMIT_BYTES = 8 * 1024**3
 MANIFEST = "evidence-manifest.json"
@@ -29,16 +33,20 @@ def plain_path(name):
             and name.split("/")[0] in COMPONENTS
             and all(re.fullmatch(r"[A-Za-z0-9_][A-Za-z0-9_.-]*", slug)
                     for slug in name.split("/"))
-            and PurePosixPath(name).suffix in DATA_SUFFIXES)
+            and (PurePosixPath(name).suffix in DATA_SUFFIXES
+                 or (name.startswith("within-setting/") and
+                     PurePosixPath(name).suffix in {".jsonl", ".sha256"})))
 
 
 def read_manifest(raw):
     need(len(raw) < 8 * 1024**2, "Oversized evidence manifest")
     doc = json.loads(raw)
-    need(doc.get("schema") == SCHEMA and isinstance(doc.get("files"), dict), "Wrong evidence schema")
+    need(doc.get("schema") in {LEGACY_SCHEMA, SCHEMA} and isinstance(doc.get("files"), dict),
+         "Wrong evidence schema")
     files = doc["files"]
-    need({name.split("/")[0] for name in files} == COMPONENTS and len(files) <= 20_000,
-         "Evidence must cover all four components")
+    components = COMPONENTS if doc["schema"] == SCHEMA else LEGACY_COMPONENTS
+    need({name.split("/")[0] for name in files} == components and len(files) <= 20_000,
+         "Evidence must cover the components required by its schema")
     for name, row in files.items():
         need(plain_path(name), f"Unsafe or unsupported evidence name: {name!r}")
         need(type(row.get("bytes")) is int and row["bytes"] >= 0
@@ -56,6 +64,25 @@ def measure(source, expected, output=None):
         if output:
             output.write(block)
     need(seen == expected["bytes"] and digest.hexdigest() == expected["sha256"], "Evidence checksum mismatch")
+
+
+def fetch_public(dest):
+    pin = json.loads((ROOT / "data/public-evidence.json").read_text(encoding="utf-8"))
+    need(re.fullmatch(r"v[0-9]+\.[0-9]+\.[0-9]+", pin.get("tag", "")) is not None,
+         "Invalid public release tag")
+    filename = pin.get("filename", "")
+    need(re.fullmatch(r"fgcs-reproduction-evidence-v[0-9]+\.[0-9]+\.[0-9]+\.zip", filename) is not None
+         and type(pin.get("bytes")) is int and 0 < pin["bytes"] <= LIMIT_BYTES
+         and re.fullmatch(r"[0-9a-f]{64}", pin.get("sha256", "")) is not None,
+         "Invalid public evidence pin")
+    url = ("https://github.com/Jay3404/serverless-reservation-release/releases/download/"
+           f"{pin['tag']}/{filename}")
+    target = dest / filename
+    print(f"Downloading public release evidence: {url}", flush=True)
+    with urlopen(Request(url, headers={"User-Agent": "fgcs-reproduction"}), timeout=120) as stream:
+        with target.open("xb") as out:
+            measure(stream, pin, out)
+    return target
 
 
 def validated_evidence(source, dest):
@@ -119,10 +146,15 @@ def run(source, out, workers, figures=True, full_grid=False, rerun_operating=Fal
             raise RuntimeError(f"{name} failed; see {logs / (name + '.log')}")
 
     IBM, K, P = (evidence / v for v in ("ibm", "kind", "prediction"))
+    within = evidence / "within-setting"
     bundle = out / "inputs.json.gz"
     try:
         step("ibm_prepare", "code/ibm/prepare.py", "build", IBM / "normalized", bundle)
         step("kind", "code/kind/reproduce.py", "--evidence", K, "--out", out / "kind")
+        if within.is_dir():
+            step("kind_within_setting", "code/kind/within_setting/score_v2.py", "--frozen",
+                 ROOT / "code/kind/within_setting", "--calibration", within / "calibration",
+                 "--evaluation", within / "evaluation_v2", "--out", out / "kind-within-setting")
         step("prediction", "code/prediction/reproduce.py", "--evidence", P,
              "--out", out / "prediction", *(["--figures"] if figures else []),
              *(["--font-dir", font_dir] if font_dir and figures else []))
@@ -137,9 +169,13 @@ def run(source, out, workers, figures=True, full_grid=False, rerun_operating=Fal
         step("ppo_appendix", "code/ppo/reproduce.py", "--evidence", evidence / "ppo", "--out", out / "ppo.json")
         if figures:
             ko = ["--language", "both", "--korean-font", korean_font] if korean_font else []
-            step("figure_5", "code/figures/plot_figure5.py", "--first",
+            step("figure_5", "code/figures/plot_figure5_readable.py", "--first",
                  out / "kind" / "replay/first_decisions.csv", "--pairs", out / "kind" / "baseline/block_pairs.csv",
-                 "--out", out / "figures", *ko)
+                 "--out", out / "figures", *(ko or ["--language", "en"]))
+            if within.is_dir():
+                step("figure_6", "code/kind/within_setting/plot.py", "--trials",
+                     out / "kind-within-setting/trials.csv", "--pairs", out / "kind-within-setting/pairs.csv",
+                     "--out", out / "figures", *(ko or ["--language", "en"]))
             if paper_boundary:
                 step("figure_3_paper_en", "code/figures/plot_boundary_paper.py", "--gains",
                      out / "prediction/boundary_gains.csv", "--output", out / "figures/boundary-gain-en.pdf")
@@ -173,7 +209,7 @@ def run(source, out, workers, figures=True, full_grid=False, rerun_operating=Fal
 
 def main():
     cli = argparse.ArgumentParser(description=__doc__)
-    cli.add_argument("--evidence", required=True, type=Path, help="separate authorized evidence ZIP or extracted directory")
+    cli.add_argument("--evidence", type=Path, help="optional local evidence ZIP or directory; defaults to public GitHub release")
     cli.add_argument("--out", type=Path, required=True, help="new results directory")
     cli.add_argument("--workers", type=int, choices=range(1, 9), default=4)
     cli.add_argument("--no-figures", action="store_true")
@@ -186,9 +222,17 @@ def main():
     a = cli.parse_args()
     if sys.flags.optimize:
         cli.error("Do not use Python optimization: the archived checks require assertions.")
-    run(a.evidence.resolve(), a.out.resolve(), a.workers, figures=not a.no_figures, full_grid=a.full_ibm,
-        rerun_operating=a.rerun_operating, korean_font=a.korean_font.resolve() if a.korean_font else None,
-        font_dir=a.font_dir.resolve() if a.font_dir else None, paper_boundary=a.paper_boundary_figure)
+    def execute(source):
+        run(source, a.out.resolve(), a.workers, figures=not a.no_figures, full_grid=a.full_ibm,
+            rerun_operating=a.rerun_operating, korean_font=a.korean_font.resolve() if a.korean_font else None,
+            font_dir=a.font_dir.resolve() if a.font_dir else None, paper_boundary=a.paper_boundary_figure)
+    if a.evidence:
+        execute(a.evidence.resolve())
+    else:
+        if a.out.exists():
+            cli.error("Choose a new output directory before downloading evidence.")
+        with TemporaryDirectory(prefix="fgcs-release-") as work:
+            execute(fetch_public(Path(work)))
 
 
 if __name__ == "__main__":

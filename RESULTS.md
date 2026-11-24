@@ -18,7 +18,9 @@ the recorded trials, not from a new cluster or from synthetic measurements.
 | RQ3: original TTL60 and finite TTL frontier | With `--full-ibm`, rerun the 58 TTL60 cells, TRAIN selection, selected DEV replay and the 144-cell frontier, then compare with the frozen ledgers and summaries. | `ttl60/`, `rebudget/`, `frontier/`, and independent audit directories |
 | RQ3: TTL5, exact-return oracle, sensitivity and decision mechanisms | Reassemble the input from the frozen request windows and calibration; independently recompute the operating rows and oracle wait-event comparison. Add `--rerun-operating` to run all 80 operating and four TTL60 oracle cells again. Recount the 42/28 state differences, 23 action-switch comparisons and 32 reference cells from archived ledgers. | `ibm-operating/`, `decision-audit.json` |
 | RQ3: Kind forced actions, scheduler/forecast baselines and setting-aware comparator | Recompute both 48-trial campaigns, the forced-wait check and the configuration-aware first decisions. Configuration replay assigns no latency to the unrun policy. | `kind/forced/`, `kind/baseline/`, `kind/replay/` |
-| Figure 5 | Generate from the paired measurements and first-decision replay above. | `figures/config-control-en.pdf` |
+| RQ3: within-setting physical evaluation | Recheck the separate 12-trial calibration and 48-trial evaluation; reconstruct UID-linked first decisions, release intervals, Bind and paired reservation outcomes. | `kind-within-setting/RESULTS.json`, `trials.csv`, `pairs.csv`, `summary.csv`, `contrasts.csv` |
+| Figure 5 | Generate the updated layout from the paired measurements and first-decision replay above. | `figures/config-control-en.pdf` |
+| Figure 6 | Regenerate actual first-Z-deletion counts and block-paired latency differences from the within-setting tables. | `figures/within-setting-en.pdf` |
 | Supplementary PPO D comparison | Recount requests, waits and reservation tails across five seeds and Planner; compare recorded TTL actions and weight hashes. No training or checkpoint loading. | `ppo.json` |
 
 `run-report.json` records which commands completed. With the default

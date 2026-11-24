@@ -30,8 +30,8 @@ class EvidenceTests(unittest.TestCase):
             root = Path(d)
             path = self.fixture(root)
             dest = root / "checked"
-            self.assertEqual(reproduce.validated_evidence(path, dest), (dest, 4))
-            self.assertEqual(reproduce.validated_evidence(dest, root / "unused"), (dest, 4))
+            self.assertEqual(reproduce.validated_evidence(path, dest), (dest, len(reproduce.COMPONENTS)))
+            self.assertEqual(reproduce.validated_evidence(dest, root / "unused"), (dest, len(reproduce.COMPONENTS)))
             (dest / "ibm" / "example.json").write_bytes(b"[]\n")
             with self.assertRaisesRegex(ValueError, "checksum"):
                 reproduce.validated_evidence(dest, root / "unused")
@@ -51,6 +51,8 @@ class EvidenceTests(unittest.TestCase):
         self.assertFalse(reproduce.plain_path("kind/prepare.py"))
         self.assertFalse(reproduce.plain_path("/kind/x.csv"))
         self.assertTrue(reproduce.plain_path("kind/trials.csv.gz"))
+        self.assertTrue(reproduce.plain_path("within-setting/calibration/trial-00/signal.jsonl"))
+        self.assertFalse(reproduce.plain_path("kind/signal.jsonl"))
 
 
 if __name__ == "__main__":

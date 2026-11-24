@@ -23,11 +23,13 @@ the result does not have its own numbered table in that language.
 | Kind forced actions | 12 | 10 | [Kind control](kind-control.md#table-12-forced-action-and-fixed-versus-signal-comparisons) |
 | Kind four-arm outcomes | 13 | 11 | [Kind control](kind-control.md#table-13-separate-kind-evaluation-by-arm) |
 | Kind matched differences | 14 | 12 | [Kind control](kind-control.md#table-14-matched-differences-in-the-separate-kind-evaluation) |
-| Calibration distributions | A.15 | A.13 | [Prediction appendix](prediction.md#table-a15-calibration-distributions) |
-| Three reported boundary cases | B.16 | B.14 | [Prediction appendix](prediction.md#table-b16-largest-boundary-gains) |
-| IBM cache-bracket replay, window 1 (42 cells) | C.17 | C.15 | [IBM appendix](ibm-appendix.md#table-c17-window-1-cache-bracket-replay) |
-| IBM cache-bracket replay, window 2 (42 cells) | C.18 | C.16 | [IBM appendix](ibm-appendix.md#table-c18-window-2-cache-bracket-replay) |
-| IBM TTL5 horizon sensitivity | C.19 | C.17 | [IBM appendix](ibm-appendix.md#table-c19-ttl5-horizon-sensitivity) |
+| Within-setting Kind calibration | 15 | 13 | [Calibration](within-setting.md#table-15-within-setting-forced-reclaim-calibration) |
+| Within-setting Kind outcomes and matched contrasts | 16 + Figure 6 | 14 + Figure 6 | [Evaluation](within-setting.md#table-16-within-setting-evaluation) |
+| Calibration distributions | A.17 | A.15 | [Prediction appendix](prediction.md#table-a17-calibration-distributions) |
+| Three reported boundary cases | B.18 | B.16 | [Prediction appendix](prediction.md#table-b18-largest-boundary-gains) |
+| IBM cache-bracket replay, window 1 (42 cells) | C.19 | C.17 | [IBM appendix](ibm-appendix.md#table-c19-window-1-cache-bracket-replay) |
+| IBM cache-bracket replay, window 2 (42 cells) | C.20 | C.18 | [IBM appendix](ibm-appendix.md#table-c20-window-2-cache-bracket-replay) |
+| IBM TTL5 horizon sensitivity | C.21 | C.19 | [IBM appendix](ibm-appendix.md#table-c21-ttl5-horizon-sensitivity) |
 | Supplementary PPO comparison | Appendix text | Appendix text | [PPO](ppo.md) |
 
 The related-work comparison (Table 1) is not an experimental result and is

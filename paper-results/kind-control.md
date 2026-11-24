@@ -4,6 +4,9 @@ Tables 12–14 use the English manuscript numbering. The forced-action study
 in Table 12 and the four-arm controller evaluation in Tables 13–14 are separate
 48-trial experiments. These are published summaries, not trial-level records.
 See the [Kind reproduction guide](../code/kind/README.md) and [result map](../RESULTS.md).
+The later [within-setting evaluation](within-setting.md) is a separate
+physical comparison. The setting-specific comparator in Figure 5 was
+replayed offline; only Figure 6 compares its measured outcomes.
 
 ## Table 12. Forced-action and fixed-versus-signal comparisons
 
